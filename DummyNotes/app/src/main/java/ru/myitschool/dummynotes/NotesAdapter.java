@@ -41,7 +41,7 @@ public class NotesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.list_item, parent, false);
-        ((TextView) view.findViewById(R.id.textView)).setText(names[position]);
+        ((TextView) view.findViewById(R.id.text_data)).setText(names[position]);
         return view;
     }
 }
