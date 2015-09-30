@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.zip.Inflater;
 
@@ -14,6 +15,8 @@ import java.util.zip.Inflater;
  */
 public class NotesAdapter extends BaseAdapter {
 
+    private Context mContext;
+
     String[] names = { "Иван", "Марья", "Петр", "Антон", "Даша", "Борис",
             "Костя", "Игорь", "Анна", "Денис", "Андрей" };
 
@@ -21,6 +24,7 @@ public class NotesAdapter extends BaseAdapter {
 
     NotesAdapter(Context context){
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mContext = context;
     }
 
     @Override
@@ -35,13 +39,20 @@ public class NotesAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = inflater.inflate(R.layout.list_item, parent, false);
+        final int mPosition = position;
         ((TextView) view.findViewById(R.id.text_data)).setText(names[position]);
+        view.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Delete the " + mPosition, Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 }
