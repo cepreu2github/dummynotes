@@ -8,14 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.zip.Inflater;
-
 /**
  * Created by teacher on 24.09.15.
  */
 public class NotesAdapter extends BaseAdapter {
 
     private Context mContext;
+    private NotesService notesService;
 
     String[] names = { "Иван", "Марья", "Петр", "Антон", "Даша", "Борис",
             "Костя", "Игорь", "Анна", "Денис", "Андрей" };
@@ -25,6 +24,7 @@ public class NotesAdapter extends BaseAdapter {
     NotesAdapter(Context context){
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mContext = context;
+        notesService = new NotesService(context);
     }
 
     @Override
