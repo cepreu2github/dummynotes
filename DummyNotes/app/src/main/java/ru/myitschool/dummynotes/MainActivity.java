@@ -1,27 +1,27 @@
 package ru.myitschool.dummynotes;
 
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.daimajia.swipe.SwipeLayout;
-
 
 public class MainActivity extends ActionBarActivity {
 
     private Context mContext = this;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(mToolbar);
 
         final ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(new NotesAdapter(this));
