@@ -1,5 +1,7 @@
 package ru.myitschool.dummynotes;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mContext, "Click at " + position, Toast.LENGTH_SHORT).show();
+                editNote(id);
             }
         });
         // add button
@@ -56,6 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void doSearch(String query){
         Toast.makeText(mContext, "Searching: " + query, Toast.LENGTH_SHORT).show();
+    }
+
+    private void editNote(long id){
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        EditFragment editFragment = new EditFragment();
+        fragmentTransaction.replace(R.id.controls, editFragment);
+        fragmentTransaction.commit();
     }
 
     @Override
