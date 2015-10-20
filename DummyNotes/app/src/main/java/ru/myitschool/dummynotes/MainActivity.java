@@ -39,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Click at " + position, Toast.LENGTH_SHORT).show();
             }
         });
+        // add button
+        findViewById(R.id.add_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "Add something!", Toast.LENGTH_SHORT).show();
+            }
+        });
         // Search work
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
