@@ -33,21 +33,12 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        final ListView listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(new NotesAdapter(this));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                editNote(id);
-            }
-        });
-        // add button
-        findViewById(R.id.add_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(mContext, "Add something!", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // place list of notes
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        ListFragment listFragment = new ListFragment();
+        fragmentTransaction.replace(R.id.controls, listFragment);
+        fragmentTransaction.commit();
         // Search work
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
@@ -60,12 +51,13 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(mContext, "Searching: " + query, Toast.LENGTH_SHORT).show();
     }
 
-    private void editNote(long id){
+    public void editNote(long id){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         EditFragment editFragment = new EditFragment();
-        fragmentTransaction.replace(R.id.controls, editFragment);
+        fragmentTransaction.replace(R.id.controls, editFragment).addToBackStack("");
         fragmentTransaction.commit();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
