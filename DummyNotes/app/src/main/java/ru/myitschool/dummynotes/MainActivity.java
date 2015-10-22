@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -55,9 +56,23 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         EditFragment editFragment = new EditFragment();
-        fragmentTransaction.replace(R.id.controls, editFragment).addToBackStack("");
+        fragmentTransaction.replace(R.id.controls, editFragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.getMenu().clear();
+    }
+
+    public void showList(){
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.popBackStack();
+        mToolbar.inflateMenu(R.menu.menu_main);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false); // disable the button
+            actionBar.setDisplayHomeAsUpEnabled(false); // remove the left caret
+            actionBar.setDisplayShowHomeEnabled(false); // remove the icon
+        }
     }
 
     @Override
@@ -82,8 +97,21 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(mContext, "Sort", Toast.LENGTH_SHORT).show();
             return true;
         }
+        if (id == android.R.id.home) {
+            showList();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getFragmentManager();
+        if(fragmentManager.getBackStackEntryCount() != 0) {
+            showList();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     protected void onSaveInstanceState (Bundle outState){
