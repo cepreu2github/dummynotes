@@ -21,7 +21,7 @@ public class DummyNotesDbHelper extends SQLiteOpenHelper {
                     NoteEntry._ID + " INTEGER PRIMARY KEY," +
                     NoteEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     NoteEntry.COLUMN_NAME_TEXT + TEXT_TYPE + COMMA_SEP +
-                    NoteEntry.COLUMN_DATE + TEXT_TYPE + COMMA_SEP +
+                    NoteEntry.COLUMN_NAME_DATE + TEXT_TYPE + COMMA_SEP +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
