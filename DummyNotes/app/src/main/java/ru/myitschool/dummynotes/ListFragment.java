@@ -14,13 +14,25 @@ import android.widget.Toast;
  */
 public class ListFragment extends Fragment {
     @Override
+    public void onStart() {
+        super.onStart();
+        // set toolbar of Activity
+        ((MainActivity) getActivity()).fillMenu();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.list_notes, container, false);
         // list adapter
         final ListView listView = (ListView) rootView.findViewById(R.id.listView);
-        listView.setAdapter(new NotesAdapter(getActivity()));
+        String sortMode = getArguments().getString("sortMode");
+        String searchString = getArguments().getString("searchString");
+        if (sortMode.equals("date"))
+            listView.setAdapter(new NotesAdapter(getActivity(), NotesService.SortMode.DATE, searchString));
+        else
+            listView.setAdapter(new NotesAdapter(getActivity(), NotesService.SortMode.TITLE, searchString));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -31,7 +43,7 @@ public class ListFragment extends Fragment {
         rootView.findViewById(R.id.add_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Add something!", Toast.LENGTH_SHORT).show();
+                ((MainActivity) getActivity()).editNote(-1);
             }
         });
         return rootView;

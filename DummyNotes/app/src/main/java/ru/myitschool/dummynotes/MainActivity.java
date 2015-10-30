@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext = this;
     private Toolbar mToolbar;
     private SharedPreferences mPrefs;
+    private String sortMode = "date";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,40 +34,57 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
-        // place list of notes
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        ListFragment listFragment = new ListFragment();
-        fragmentTransaction.replace(R.id.controls, listFragment);
-        fragmentTransaction.commit();
-        // Search work
+        // determine action
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // Search work
             String query = intent.getStringExtra(SearchManager.QUERY);
-            doSearch(query);
+            mToolbar.setSubtitle("Searching: " + query);
+            if (savedInstanceState == null)
+                refreshList(query);
+        } else {
+            // place list of notes
+            if (savedInstanceState == null)
+                refreshList("");
         }
     }
 
-    private void doSearch(String query){
-        Toast.makeText(mContext, "Searching: " + query, Toast.LENGTH_SHORT).show();
+    public void clearMenu(){
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.getMenu().clear();
     }
 
     public void editNote(long id){
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         EditFragment editFragment = new EditFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong("id", id);
+        editFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.controls, editFragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.getMenu().clear();
     }
 
-    public void showList(){
+    public void refreshList(String searchString){
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.popBackStack();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        ListFragment listFragment = new ListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("sortMode", sortMode);
+        bundle.putString("searchString", searchString);
+        listFragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.controls, listFragment);
+        fragmentTransaction.commit();
+    }
+
+    public void fillMenu(){
+        clearMenu();
         mToolbar.inflateMenu(R.menu.menu_main);
+        Menu menu = mToolbar.getMenu();
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(false); // disable the button
@@ -75,13 +93,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void showList(){
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.popBackStack();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        FragmentManager fragmentManager = getFragmentManager();
+        if(fragmentManager.getBackStackEntryCount() == 0)
+            fillMenu();
         return true;
     }
 
@@ -94,8 +115,12 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort){
-            Toast.makeText(mContext, "Sort", Toast.LENGTH_SHORT).show();
-            return true;
+            if (sortMode.equals("date"))
+                sortMode = "title";
+            else
+                sortMode = "date";
+            Toast.makeText(mContext, "Sort by " + sortMode, Toast.LENGTH_SHORT).show();
+            refreshList("");
         }
         if (id == android.R.id.home) {
             showList();
@@ -112,12 +137,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
-    }
-
-    protected void onSaveInstanceState (Bundle outState){
-        super.onSaveInstanceState(outState);
-
-        //FIXME: save current list position, opened note id, sorting mode
     }
 
 }
